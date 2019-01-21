@@ -1,0 +1,70 @@
+FROM ubuntu:16.04
+ENV USER_NAME=hadoopdocker
+ENV HOME=/home/${USER_NAME}
+
+
+# install require pakage
+RUN apt-get update -y && \
+    apt-get install -y vim wget rsync openssh-server openssh-client sudo
+
+
+# install java
+RUN mkdir /usr/lib/jvm && \
+    wget -P /usr/lib/jvm/ --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/11.0.2+7/f51449fcd52f4d52b93a989c5c56ed3c/jdk-11.0.2_linux-x64_bin.tar.gz && \
+    tar -xf /usr/lib/jvm/jdk-11.0.2_linux-x64_bin.tar.gz -C /usr/lib/jvm && \
+    rm /usr/lib/jvm/jdk-11.0.2_linux-x64_bin.tar.gz
+
+
+# java env (or edit bashrc)
+
+
+
+# root password setting
+# user add and user password setting
+# user can use sudo command without password
+RUN echo "root:rootpass" | chpasswd && \
+    useradd ${USER_NAME} -m -s /bin/bash && \
+    echo ${USER_NAME}":userpass" | chpasswd && \
+    adduser ${USER_NAME} sudo && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+    chown ${USER_NAME}:${USER_NAME} /home/${USER_NAME}
+
+
+# ssh root access permission
+# RUN sed -i '/^#/!s/PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+
+# user login
+USER ${USER_NAME}
+WORKDIR ${HOME}
+
+# ssh login without password
+RUN mkdir .ssh && \
+    ssh-keygen -t rsa -P '' -f .ssh/id_rsa && \
+    cp .ssh/id_rsa.pub .ssh/authorized_keys
+    
+
+# download hadoop
+RUN wget http://apache.mirror.cdnetworks.com/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz && \
+    tar -xf hadoop-2.7.7.tar.gz && \
+    rm hadoop-2.7.7.tar.gz
+
+
+# hadoop env
+
+
+
+# HDFS ports
+EXPOSE 50010 50020 50070 50075 50090 8020 9000
+
+# Mapred ports
+EXPOSE 10020 19888
+
+# YARN ports
+EXPOSE 8030 8031 8032 8033 8040 8042 8088
+
+# Other ports
+EXPOSE 49707 2122
+
+# start ssh service
+ENTRYPOINT sudo service ssh start && bash
