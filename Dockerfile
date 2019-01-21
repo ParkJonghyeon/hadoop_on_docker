@@ -1,4 +1,7 @@
 FROM ubuntu:16.04
+
+# ENV로 환경변수 등록시 컨테이너에서 echo를 통해서 확인 가능. 비밀번호 등의 민감한 정보는 등록하지 말 것
+# Hadoop 세팅을 위한 환경변수 등록을 위해서 사용 가능하지만 과제 제출시 학생들 컨닝 위험 있으므로 직접 텍스트 편집할때는 sed 사용 권장
 ENV USER_NAME=hadoopdocker
 ENV HOME=/home/${USER_NAME}
 
@@ -41,9 +44,9 @@ RUN mkdir .ssh && \
 
 
 # java env (use dockerfile ENV)
-#ENV JAVA_HOME /usr/lib/jvm/jdk-11.0.2
-#ENV PATH $PATH:$JAVA_HOME/bin:$PATH
-#ENV CLASS_PATH=$JAVA_HOME/lib:$CLASS_PATH
+# ENV JAVA_HOME /usr/lib/jvm/jdk-11.0.2
+# ENV PATH $PATH:$JAVA_HOME/bin:$PATH
+# ENV CLASS_PATH=$JAVA_HOME/lib:$CLASS_PATH
 
 
 # java env (edit bashrc)
@@ -59,18 +62,18 @@ RUN wget -q http://apache.mirror.cdnetworks.com/hadoop/common/hadoop-2.9.2/hadoo
     rm hadoop-2.9.2.tar.gz
 
 
-# hadoop env
-ENV HADOOP_HOME /home/${USER_NAME}/hadoop-2.9.2
-ENV HADOOP_PREFIX $HADOOP_HOME
-ENV HADOOP_COMMON_HOME $HADOOP_HOME
-ENV HADOOP_HDFS_HOME $HADOOP_HOME
-ENV HADOOP_MAPRED_HOME $HADOOP_HOME
-ENV HADOOP_YARN_HOME $HADOOP_HOME
-ENV HADOOP_CONF_DIR $HADOOP_HOME/etc/hadoop
-ENV YARN_CONF_DIR $HADOOP_HOME/etc/hadoop
-ENV PATH $PATH:$JAVA_HOME/bin:$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+# hadoop env (use dockerfile ENV)
+# ENV HADOOP_HOME /home/${USER_NAME}/hadoop-2.9.2
+# ENV HADOOP_PREFIX $HADOOP_HOME
+# ENV HADOOP_COMMON_HOME $HADOOP_HOME
+# ENV HADOOP_HDFS_HOME $HADOOP_HOME
+# ENV HADOOP_MAPRED_HOME $HADOOP_HOME
+# ENV HADOOP_YARN_HOME $HADOOP_HOME
+# ENV HADOOP_CONF_DIR $HADOOP_HOME/etc/hadoop
+# ENV YARN_CONF_DIR $HADOOP_HOME/etc/hadoop
+# ENV PATH $PATH:$JAVA_HOME/bin:$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
 
-#TODO
+# TODO: hadoop env (edit .sh)
 RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/jdk-11.0.2\nexport HADOOP_HOME=/home/$USER_NAME/hadoop-2.9.2\nexport HADOOP_PREFIX=/home/$USER_NAME/hadoop-2.9.2\nexport HADOOP_MAPRED_HOME=$HADOOP_HOME
 export HADOOP_COMMON_HOME=$HADOOP_HOME
 export HADOOP_HDFS_HOME=$HADOOP_HOME
@@ -93,4 +96,5 @@ EXPOSE 8030 8031 8032 8033 8040 8042 8088
 EXPOSE 49707 2122
 
 # start ssh service
+# ssh 서비스 실행(ssh 접속 활성화)
 ENTRYPOINT sudo service ssh start && bash
