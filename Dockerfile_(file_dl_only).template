@@ -10,7 +10,7 @@ RUN apt-get update -y && \
 
 # install java
 RUN mkdir /usr/lib/jvm && \
-    wget -P /usr/lib/jvm/ --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/11.0.2+7/f51449fcd52f4d52b93a989c5c56ed3c/jdk-11.0.2_linux-x64_bin.tar.gz && \
+    wget -q -P /usr/lib/jvm/ --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/11.0.2+7/f51449fcd52f4d52b93a989c5c56ed3c/jdk-11.0.2_linux-x64_bin.tar.gz && \
     tar -xf /usr/lib/jvm/jdk-11.0.2_linux-x64_bin.tar.gz -C /usr/lib/jvm && \
     rm /usr/lib/jvm/jdk-11.0.2_linux-x64_bin.tar.gz
 
@@ -45,9 +45,9 @@ RUN mkdir .ssh && \
     
 
 # download hadoop
-RUN wget http://apache.mirror.cdnetworks.com/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz && \
-    tar -xf hadoop-2.7.7.tar.gz && \
-    rm hadoop-2.7.7.tar.gz
+RUN wget -q http://apache.mirror.cdnetworks.com/hadoop/common/hadoop-2.9.2/hadoop-2.9.2.tar.gz && \
+    tar -xf hadoop-2.9.2.tar.gz && \
+    rm hadoop-2.9.2.tar.gz
 
 
 # hadoop env
